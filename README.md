@@ -1,10 +1,22 @@
 # Cheap Yellow Display
 We gebruiken in de masterclass een Cheap Yellow Display met LVGL in ESPHome. 
+
 ![Touchscreen](https://github.com/gjgroen/esp32-ct/blob/main/09_cyd.jpg)
 
 ## Aansluitschema
-Hier zie je de aansluitingen.
+Hier zie je de aansluitingen. In dit voorbeeld is een BME 280 aangesloten via de I2C-bus.
 ![Aansluitschema](https://github.com/gjgroen/esp32-ct/blob/main/aansluitingen.png)
+
+## GPIO
+Een kleine beperking bij displays met ingebouwde ESP32 is dat er maar enkele gpio-pinnen beschikbaar zijn, terwijl die wel nodig kunnen zijn om extra componenten aan te sluiten. Meestal is wel een I2C-interface beschikbaar. Via slechts twee pinnen kun je dan een zogeheten io-expander aansluiten, bijvoorbeeld de MCP23017 of SX1509. Die geven je 16 extra gpio-pinnen, waarbij de SX1509 ook pwm-signalen ondersteunt voor bijvoorbeeld het dimmen van leds. Je hebt vaak nog wel een passende connector nodig.
+
+```
+i2c:
+  sda: GPIO27
+  scl: GPIO22
+  scan: true
+  id: i2c_bus_a
+```
 
 ## Extra tips
 Op deze websites vind je nog aanvullende tips voor dit scherm:
