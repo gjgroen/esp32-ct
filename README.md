@@ -1,5 +1,5 @@
 # Cheap Yellow Display
-We gebruiken in de masterclass een Cheap Yellow Display met LVGL in ESPHome. Deze heeft het typenummer ESP32-2432S028. In de map esphome vind je een werkend voorbeeld. 
+We gebruiken in de masterclass een Cheap Yellow Display met LVGL in ESPHome. Deze heeft het typenummer ESP32-2432S028. In de map esphome vind je een werkend voorbeeld (cyd-demo.yaml). Een vergelijkbare demo voor de Elecrow 5 inch en 7 inch touchscreens volgt nog.
 
 Merk op dat er ook een (oudere) variant van dit touchscreen is met de ILI9341. In dat geval gebruik je `model: ILI9341` en `invert_colors: false`.
 
