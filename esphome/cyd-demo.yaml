@@ -1,0 +1,198 @@
+esphome:
+  name: touchdemo
+  friendly_name: Touchdemo
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Touchdemo Fallback Hotspot"
+    password: !secret ap_password
+
+captive_portal:
+
+spi:
+  - id: lcd
+    clk_pin: GPIO14
+    mosi_pin: GPIO13
+    miso_pin: GPIO12
+  - id: touch
+    clk_pin: GPIO25
+    mosi_pin: GPIO32
+    miso_pin: GPIO39
+
+i2c:
+  sda: GPIO27
+  scl: GPIO22
+  scan: true
+  id: i2c_bus_a
+
+display:
+  - platform: ili9xxx
+    model: ILI9342
+    spi_id: lcd
+    cs_pin: GPIO15
+    dc_pin: GPIO2
+    invert_colors: true
+    auto_clear_enabled: false
+
+touchscreen:
+  platform: xpt2046
+  spi_id: touch
+  cs_pin: 33
+  interrupt_pin: 36
+  update_interval: 50ms
+  threshold: 400
+  calibration:
+    x_min: 3860
+    x_max: 280
+    y_min: 3860
+    y_max: 340
+  transform:
+    swap_xy: true
+  on_touch:
+    - script.stop: backlight_timer
+    - script.execute: backlight_timer
+  # Kalibratie - de coordinaten worden in je log getoond, eventueel regels verbergen met kommentaarteken (#)
+    - lambda: |-
+          ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%0d",
+              touch.x,
+              touch.y,
+              touch.x_raw,
+              touch.y_raw
+              );
+              
+lvgl:
+  buffer_size: 25%
+  widgets:
+    - button:
+        id: light_btn
+        align: TOP_LEFT
+        x: 10
+        y: 10
+        width: 100
+        height: 70
+        checkable: true
+        widgets:
+          - label:
+              align: CENTER
+              text: 'WLED'
+        on_click:
+          - homeassistant.action:
+              action: light.toggle
+              data:
+                entity_id: light.wledkantoor
+
+    - slider:
+        id: wledkantoor_slider
+        align: TOP_RIGHT
+        x: -10
+        y: 10
+        width: 170
+        value: 75
+        min_value: 0
+        max_value: 255
+        on_release:
+          - homeassistant.action:
+              action: light.turn_on
+              data:
+                entity_id: light.wledkantoor
+                brightness: !lambda return int(x);
+
+# Pinnen voor backlight van het scherm en de rgb-led op de achterzijde
+output:
+    # Backlight
+  - platform: ledc
+    pin: GPIO21
+    id: backlight
+
+    # RGB-led rood/groen/blauw
+  - platform: ledc
+    id: output_red
+    pin: GPIO4
+    inverted: true
+  - platform: ledc
+    id: output_green
+    pin: GPIO16
+    inverted: true
+  - platform: ledc
+    id: output_blue
+    pin: GPIO17
+    inverted: true
+
+    # Buzzer op P4
+  - platform: ledc
+    pin: GPIO26
+    id: rtttl_out
+
+light:
+    # Backlight-light
+  - platform: monochromatic
+    output: backlight
+    name: "Display Backlight"
+    id: backlight_light
+    restore_mode: ALWAYS_ON
+
+    # RGB-led
+  - platform: rgb
+    name: LED
+    id: led
+    red: output_red
+    green: output_green
+    blue: output_blue
+    restore_mode: ALWAYS_OFF
+
+binary_sensor:
+  - platform: homeassistant
+    id: wledkantoor
+    entity_id: light.wledkantoor
+    publish_initial_state: true
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: light_btn
+          state:
+            checked: !lambda return x;
+
+sensor:
+  - platform: homeassistant
+    id: wledkantoor_brightness
+    entity_id: light.wledkantoor
+    attribute: brightness
+    on_value:
+      - lvgl.slider.update:
+          id: wledkantoor_slider
+          value: !lambda return x;
+
+# Script om backlight na inactiviteit te dimmen naar 60% (na 15 seconden) en daarna uit (na 30 seconden)
+script:
+  id: backlight_timer
+  then:
+  - light.turn_on:
+      id: backlight_light
+      brightness: 100%
+  - delay: 15s
+  - light.turn_on:
+      id: backlight_light
+      brightness: 60%
+  - delay: 30s
+  - light.turn_off: backlight_light
