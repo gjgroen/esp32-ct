@@ -35,4 +35,17 @@ Op de volgende websites vind je tips en instructies voor het bouwen van een shot
 # Deurbel slim maken
 Een ouderwetse deurbel met beltrafo werkt doorgaans met beltransformator die 8 volt wisselspanning geeft. Voor zo’n €5 kun je deze slim maken, zonder ingrijpende wijzigingen. Je hebt niet meer dan een ESP32, led, optocoupler (zoals de 4N35) en een weerstand van 1k (afhankelijk van de wisselspanning) om de stroom naar de led te beperken. Home Assistant krijgt nu de melding als er op de bel wordt gedrukt, en daarmee kun je bijvoorbeeld een tweede bel of gong laten rinkelen, of een mp3-bestand op een slimme luidspreker afspelen. Je kunt het natuurlijk op allerlei manieren uitbreiden. Zo zou je een push notificatie naar je smartphone kunnen sturen of een snapshot maken van een camera bij de voordeur.
 
-Op https://td-er.nl/2014/05/12/bestaande-en-kaku-deurbel/ zie je een voorbeeld voor een schakeling waarmee je een deurbel met beltrafo slim kunt maken.
+Op https://td-er.nl/2014/05/12/bestaande-en-kaku-deurbel/ zie je een voorbeeld voor een schakeling waarmee je een deurbel met beltrafo slim kunt maken. Alleen gebruik je nu geen KaKu-zender maar een ESPHome. We hebben voor de aansluiting de onderstaande YAML-code gebruikt in ESPHome.
+
+```
+binary_sensor:
+  - platform: gpio
+    id: button
+    name: DeurbelButton
+    pin:
+      number: GPIO14
+      mode: INPUT_PULLUP
+      inverted: true
+    filters:
+      - delayed_off: 100ms
+```
