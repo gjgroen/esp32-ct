@@ -31,6 +31,7 @@ Op deze websites vind je nog aanvullende tips voor dit scherm:
 Op de volgende websites vind je tips en instructies voor het bouwen van een shottimer voor, in dit voorbeeld, een Lelit Mara X. 
 - https://github.com/alexrus/marax_timer?tab=readme-ov-file. Dit project gebruikt een reed-content en werkt met elke espressomachine met vibratiepopmp. 
 - https://github.com/alexrus/marax_timer?tab=readme-ov-file. Dit project werkt alleen voor de Mara X en gebruikt de seriële interface om te bepalen wanneer de pomp wordt gestart.
+- https://github.com/Lumics/EspressiShotTimer. Project op basis van PlatformIO, VSCode en Arduino met tips voor componenten.
 
 # Deurbel slim maken
 Een ouderwetse deurbel met beltrafo werkt doorgaans met beltransformator die 8 volt wisselspanning geeft. Voor zo’n €5 kun je deze slim maken, zonder ingrijpende wijzigingen. Je hebt niet meer dan een ESP32, led, optocoupler (zoals de 4N35) en een weerstand van 1k (afhankelijk van de wisselspanning) om de stroom naar de led te beperken. Home Assistant krijgt nu de melding als er op de bel wordt gedrukt, en daarmee kun je bijvoorbeeld een tweede bel of gong laten rinkelen, of een mp3-bestand op een slimme luidspreker afspelen. Je kunt het natuurlijk op allerlei manieren uitbreiden. Zo zou je een push notificatie naar je smartphone kunnen sturen of een snapshot maken van een camera bij de voordeur.
