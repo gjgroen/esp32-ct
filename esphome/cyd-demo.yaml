@@ -1,3 +1,4 @@
+# YAML-code voor de ESP32-2432S028 in Home Assistant. 
 esphome:
   name: touchdemo
   friendly_name: Touchdemo
