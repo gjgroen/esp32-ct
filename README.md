@@ -2,7 +2,9 @@
 We gebruiken in de masterclass een Cheap Yellow Display met LVGL in ESPHome. 
 
 ## Aansluitschema
+![Touchscreen](https://github.com/gjgroen/esp32-ct/blob/main/09_cyd.jpg)
 
+![Aansluitschema](https://github.com/gjgroen/esp32-ct/blob/main/aansluitingen.png)
 
 ## Extra tips
 Op deze websites vind je nog aanvullende tips voor dit scherm:
